@@ -1,0 +1,15 @@
+day,outlook,temp,humidity,wind,play
+D1,Sunny,39,High,Weak,No
+D2,Sunny,38,High,Strong,No
+D3,Overcast,40,High,Weak,Yes
+D4,Rain,25,High,Weak,Yes
+D5,Rain,20,Normal,Weak,Yes
+D6,Rain,19,Normal,Strong,No
+D7,Overcast,20,Normal,Strong,Yes
+D8,Sunny,26,High,Weak,No
+D9,Sunny,18,Normal,Weak,Yes
+D10,Rain,26,Normal,Weak,Yes
+D11,Sunny,25,Normal,Strong,Yes
+D12,Overcast,24,High,Strong,Yes
+D13,Overcast,38,Normal,Weak,Yes
+D14,Rain,25,High,Strong,No

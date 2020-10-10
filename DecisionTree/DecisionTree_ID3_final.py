@@ -41,7 +41,7 @@ def Build_tree(data, header_attrib, header_decision):
         return TreeNode(attrib = data.iloc[0][header_decision])
     gain = np.array([])
     for i in header_attrib:
-        info = Info(df, i, header_decision)
+        info = Info(data, i, header_decision)
         gain = np.append(gain, (entropy-info))
     #index max
     label_max_id = np.argmax(gain)
@@ -64,7 +64,7 @@ def Build_tree(data, header_attrib, header_decision):
 
 
 def DrawTree(T, flag_draw=0):
-    print(T.attrib)
+    print(T.attrib, T.entropy)
     if(T.entropy==0):
         None
     else:
