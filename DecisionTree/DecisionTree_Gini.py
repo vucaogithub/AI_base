@@ -62,7 +62,7 @@ def Build_tree(data, header_attrib, header_decision):
     children = []
     for i in split_attribute:
         sub_data = data[data[node_attrib]==i]
-        sub_node = Build_tree(sub_data, header_attrib, header_decision)
+        sub_node = Build_tree(sub_data, header_attrib.copy(), header_decision)
         children.append(sub_node)
     #
     node = TreeNode(attrib = node_attrib, gini = node_gini, split_attribute = split_attribute, children = children)
