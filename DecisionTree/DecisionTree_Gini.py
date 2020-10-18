@@ -42,6 +42,7 @@ def Info(data, header_attrib, header_decision):
     return (info)
 
 def Build_tree(data, header_attrib, header_decision):
+    print(header_attrib)
     #child only one
     if(len(data[header_decision].unique().tolist())==1):
         return TreeNode(attrib = data.iloc[0][header_decision])

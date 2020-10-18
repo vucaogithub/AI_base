@@ -87,7 +87,6 @@ def Build_tree(data, header_attrib, header_decision):
     split_attribute = data[node_attrib].unique().tolist()
     children = []
     for i in split_attribute:
-        print(i)
         sub_data = data[data[node_attrib]==i]
         sub_node = Build_tree(sub_data, header_attrib.copy(), header_decision)
         if(sub_node == None):
@@ -111,49 +110,10 @@ def DrawTree(T, flag_draw=0):
             DrawTree(T.children[i], flag_draw+1)
 
 if __name__ == "__main__":
-    df = pd.read_csv("play_tennis.csv", encoding = 'utf-8', sep=',', index_col = 0)
+    df = pd.read_csv("play_tennis_ID3.csv", encoding = 'utf-8', sep=',', index_col = 0)
 
     label_decision = 'play'
     label_attrib = ['outlook', 'temp', 'humidity', 'wind']
 
     tree = Build_tree(df, label_attrib, label_decision)
     DrawTree(tree)
-
-    # a = Non_homogeneous(df, label_decision)
-    # print(a)
-
-
-    #==========================#
-    # print(tree.children[0].attrib)
-    # print('outlook')
-    # print('   +--', '(sunny)', '--', 'humidity')
-    # print('\t\t', end='')
-    # print('\t\t', '1')
-    #==========================#
-    # a = TreeNode('hello')
-    # list_a = []
-    # list_a.append(a)
-    # print(list_a[0].attrib)
-    #==========================#
-    # is_sunny = df['outlook']=='Sunny'
-    # temp = df[is_sunny]
-    # print(temp)
-
-    # temp_1 = df[df.outlook.eq('Sunny')]
-    # print(temp_1)
-    #==========================#
-    # label_attrib.remove('outlook')
-    # print(label_attrib)
-    #print(df.iloc[0]['play'])
-    #==========================#
-    # entropy = Entropy(df, label_decision)
-    # gain = np.array([])
-    # for i in label_attrib:
-    #     info = Info(df, i, label_decision)
-    #     gain = np.append(gain, (entropy-info))
-    # label_max_id = np.argmax(gain)
-    # print(label_attrib[label_max_id])
-    #==========================#
-    # entropy =
-    # values = df['outlook'].unique().tolist()
-    # print(values)
