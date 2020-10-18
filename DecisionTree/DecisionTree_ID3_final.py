@@ -87,10 +87,12 @@ def Build_tree(data, header_attrib, header_decision):
     split_attribute = data[node_attrib].unique().tolist()
     children = []
     for i in split_attribute:
+        print(i)
         sub_data = data[data[node_attrib]==i]
         sub_node = Build_tree(sub_data, header_attrib.copy(), header_decision)
         if(sub_node == None):
-            return TreeNode(attrib = Non_homogeneous(data, header_decision))
+            #
+            return Build_tree(data, [], header_decision)
         children.append(sub_node)
     #
     node = TreeNode(attrib = node_attrib, entropy = node_entropy, split_attribute = split_attribute, children = children)
