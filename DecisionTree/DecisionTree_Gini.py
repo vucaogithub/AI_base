@@ -3,7 +3,7 @@ import numpy as np
 import math
 
 class TreeNode(object):
-        def __init__(self, attrib, gini = 0, split_attribute = None, children = None):
+        def __init__(self, attrib, gini = 1, split_attribute = None, children = None):
             self.attrib = attrib                    # index of data in this node
             self.gini = gini                        # gini, will fill later
             self.split_attribute = split_attribute  # which attribute is chosen, it non-leaf
@@ -41,11 +41,46 @@ def Info(data, header_attrib, header_decision):
         info += (count_label_diff/lenght)*gini
     return (info)
 
+def Non_homogeneous(data, header_decision):
+    radio_stand = 1.0
+    value_decision = data[header_decision].tolist()
+    #List value decision
+    label_decision = data[header_decision].unique().tolist()
+    #Array ratio and count_label_diff
+    count_label_diff = []
+    radio = []
+    for i in label_decision:
+        count_label_diff.append(value_decision.count(i))
+    #Take id value min in count_label_diff Array
+    label_id_min = np.argmin(count_label_diff)
+    #Take value min in count_label_diff array
+    value_min = count_label_diff[label_id_min]
+    #Take value in count_label_diff array div value min in count_label_diff array -> add radio array
+    for i in count_label_diff:
+        radio.append(i/value_min)
+    #Take index of value max in radio array
+    radio_id_max = np.argmax(radio)
+    radio_max = radio[radio_id_max]
+    #Value max in radio array
+    if(radio.count(radio_max) >= 2 and radio_max >= radio_stand):
+        return None
+    else:
+        return label_decision[radio_id_max]
+#
 def Build_tree(data, header_attrib, header_decision):
-    print(header_attrib)
+    gini = Gini(data, header_decision)
+    if(len(header_attrib) == 0 and gini != 0):
+        # Var homog save value Non_homogeneous
+        homog = Non_homogeneous(data, header_decision)
+        if(homog == None):
+            return None
+        else:
+            return TreeNode(attrib = homog)
     #child only one
-    if(len(data[header_decision].unique().tolist())==1):
+    #if(len(data[header_decision].unique().tolist())==1):
+    elif(gini == 0):
         return TreeNode(attrib = data.iloc[0][header_decision])
+    #
     gain = np.array([])
     for i in header_attrib:
         info = Info(data, i, header_decision)
@@ -64,6 +99,9 @@ def Build_tree(data, header_attrib, header_decision):
     for i in split_attribute:
         sub_data = data[data[node_attrib]==i]
         sub_node = Build_tree(sub_data, header_attrib.copy(), header_decision)
+        if(sub_node == None):
+            #
+            return Build_tree(data, [], header_decision)
         children.append(sub_node)
     #
     node = TreeNode(attrib = node_attrib, gini = node_gini, split_attribute = split_attribute, children = children)
@@ -71,7 +109,7 @@ def Build_tree(data, header_attrib, header_decision):
 
 def DrawTree(T, flag_draw=0):
     print(T.attrib, T.gini)
-    if(T.split_attribute==None):
+    if(T.split_attribute == None):
         None
     else:
         for i in range(len(T.split_attribute)):
@@ -81,7 +119,7 @@ def DrawTree(T, flag_draw=0):
             DrawTree(T.children[i], flag_draw+1)
 
 if __name__ == "__main__":
-    df = pd.read_csv("play_tennis.csv", encoding = 'utf-8', sep=',', index_col = 0)
+    df = pd.read_csv("play_tennis_ID3.csv", encoding = 'utf-8', sep=',', index_col = 0)
 
     label_decision = 'play'
     label_attrib = ['outlook', 'temp', 'humidity', 'wind']
