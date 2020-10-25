@@ -17,6 +17,50 @@ def Entropy(data, header_decision): #header_decision = 'play'
         count_label_diff = value_decision.count(i)
         entropy += -(count_label_diff/lenght)*np.log2(count_label_diff/lenght)
     return (entropy)
+#======================
+def Info_continuity(data, header_attrib, header_decision, value_attrib_partitioned):
+    #header_attrib : temp  ;
+    info = 0
+    value_attrib = data[header_attrib].tolist()
+    #return len data
+    lenght = len(value_attrib)
+    #create sub_data with condition <= value_attrib_partitioned
+    sub_data = data[data[header_attrib]<=value_attrib_partitioned]
+    #Calculate lenght in sub data
+    count_label_diff = len(sub_data)
+    #Calculate entropy
+    entropy = Entropy(sub_data, header_decision)
+    #Calculate Info after Partition
+    info += (count_label_diff/lenght)*entropy
+    #create sub_data with condition > value_attrib_partitioned
+    sub_data = data[data[header_attrib]>value_attrib_partitioned]
+    count_label_diff = len(sub_data)
+    entropy = Entropy(sub_data, header_decision)
+    info += (count_label_diff/lenght)*entropy
+    #
+    return info
+
+def Partition(data, header_attrib, header_decision):
+    #Sort data by header_attrib (ex: age, temp)
+    #header_attrib: temp ;header_decision: play
+    info_partition = np.array([])
+    value_partition = np.array([])
+    data_sorted = data.sort_values(by=header_attrib)
+    #get lenght of header_decision (ex: play)
+    lenght = len(data_sorted[header_decision].tolist())
+    for i in range(lenght-1):
+        if(data_sorted.iloc[i][header_decision] != data_sorted.iloc[i+1][header_decision]):
+            info_item = Info_continuity(data_sorted, header_attrib, header_decision, data_sorted.iloc[i][header_attrib])
+            #Add in array info_partition
+            info_partition = np.append(info_partition, info_item)
+            #Add label_attrib_continuity of info_item in array value_partition
+            value_partition = np.append(value_partition, data_sorted.iloc[i][header_attrib])
+    #Postion min after Partition
+    index_min_id = np.argmin(info_partition)
+    #Value partition min at id min
+    value_partition_min = value_partition[index_min_id]
+    return value_partition_min
+#======================
 
 def Info(data, header_attrib, header_decision): #header_attrib = 'outlook', 'temp'...
     info = 0
@@ -124,7 +168,7 @@ def Train_and_eval(data, header_attrib, header_decision, ran_state, split_ratio 
     data_train = data.sample(frac = split_ratio, random_state=ran_state)
     data_test = data.loc[~data.index.isin(data_train.index)]
     #
-    rows = len(data_test)
+    rows = data_test.shape[0]
     _class = data[label_decision].unique().tolist()
     #
     evaluation = pd.DataFrame(data = np.array([[0, 0],
@@ -133,25 +177,55 @@ def Train_and_eval(data, header_attrib, header_decision, ran_state, split_ratio 
                             columns = _class)
     #
     tree = Build_tree(data_train, header_attrib, header_decision)
-    DrawTree(tree)
+    # DrawTree(tree)
     #
     for i in range(rows):
         item = data_test.iloc[i,:]
-        Y_data = item['play']
+        Y_data = item[header_decision]
         Y_test = Evaluation(item, tree)
-        print(Y_test, Y_data)
+        # print(Y_test, Y_data)
         try:
             evaluation[Y_test][Y_data] += 1
         except KeyError:
             None
-    print(evaluation)
+    return (evaluation)
 
 if __name__ == "__main__":
-    label_decision = 'play'
-    label_attrib = ['outlook', 'temp', 'humidity', 'wind']
-    df = pd.read_csv("play_tennis_ID3.csv", encoding = 'utf-8', sep=',', index_col = 0)
+    label_decision = 'class'
+    label_attrib = ['Age', 'Gender', 'Polyuria', 'Polydipsia', 'sudden weight loss', 'weakness', 'Polyphagia', 'Genital thrush', 'visual blurring',
+    'Itching', 'Irritability', 'delayed healing', 'partial paresis', 'muscle stiffness', 'Alopecia', 'Obesity']
+    # label_attrib_continuity = 'Age'
+    df = pd.read_csv("diabetes_data_upload.csv", encoding = 'utf-8', sep=',')
+    # print(Partition(df, label_attrib_continuity, label_decision))
 
+    class_positives = 'Positive'
+    class_negatives = 'Negative'
+    count = 0
+    average_F = 0
+    average_accuracy = 0
     for i in range(1,11):
-        print("Test", i, ":")
-        Train_and_eval(df, label_attrib.copy(), label_decision, i)
+        print("Eval", i, ":")
+        matrix = Train_and_eval(df, label_attrib.copy(), label_decision, i)
+        print(matrix)
+        precision = (matrix[class_positives][class_positives])/ \
+                        (matrix[class_positives][class_positives]+matrix[class_positives][class_negatives])
+        #
+        recall = (matrix[class_positives][class_positives])/ \
+                    (matrix[class_positives][class_positives]+matrix[class_negatives][class_positives])
+        #
+        accuracy = (matrix[class_positives][class_positives]+matrix[class_negatives][class_negatives])/ \
+                    (matrix[class_positives][class_positives]+matrix[class_negatives][class_negatives]+
+                    matrix[class_positives][class_negatives]+matrix[class_positives][class_negatives])
+        print('accuracy:', accuracy)
+        F = (2*precision*recall)/(precision+recall)
+        print('F:\t', F)
+        #
+        average_accuracy += accuracy
+        average_F += F
+        #
+        count += 1
+    #
+    print('Average Accuracy:', average_accuracy/count)
+    print('Average_F:\t', average_F/count)
+
     # Train_and_eval(df, label_attrib, label_decision, 5)
