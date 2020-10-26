@@ -1,22 +1,24 @@
 import pandas as pd
 import numpy as np
-
+import math
 class TreeNode(object):
-        def __init__(self, attrib, entropy = 0, split_attribute = None, children = None):
+        def __init__(self, attrib, gini = 0, split_attribute = None, children = None):
             self.attrib = attrib                    # index of data in this node
-            self.entropy = entropy                  # entropy, will fill later
+            self.gini = gini                        # gini, will fill later
             self.split_attribute = split_attribute  # which attribute is chosen, it non-leaf
             self.children = children                # list of its child nodes
 
-def Entropy(data, header_decision): #header_decision = 'play'
-    entropy = 0
+def Gini(data, header_decision):
+    gini = 0
     value_decision = data[header_decision].tolist()
+    #
     lenght = len(value_decision)
     label_decision = data[header_decision].unique().tolist()
+    #function gini
     for i in label_decision:
         count_label_diff = value_decision.count(i)
-        entropy += -(count_label_diff/lenght)*np.log2(count_label_diff/lenght)
-    return (entropy)
+        gini += math.pow(count_label_diff/lenght,2)
+    return (1-gini)
 #======================
 def Info_continuity(data, header_attrib, header_decision, value_attrib_partitioned):
     #header_attrib : temp  ;
@@ -28,15 +30,15 @@ def Info_continuity(data, header_attrib, header_decision, value_attrib_partition
     sub_data = data[data[header_attrib]<=value_attrib_partitioned]
     #Calculate lenght in sub data
     count_label_diff = len(sub_data)
-    #Calculate entropy
-    entropy = Entropy(sub_data, header_decision)
+    #Calculate Gini
+    gini = Gini(sub_data, header_decision)
     #Calculate Info after Partition
-    info += (count_label_diff/lenght)*entropy
+    info += (count_label_diff/lenght)*gini
     #create sub_data with condition > value_attrib_partitioned
     sub_data = data[data[header_attrib]>value_attrib_partitioned]
     count_label_diff = len(sub_data)
-    entropy = Entropy(sub_data, header_decision)
-    info += (count_label_diff/lenght)*entropy
+    gini = Gini(sub_data, header_decision)
+    info += (count_label_diff/lenght)*gini
     #
     return info
 
@@ -60,13 +62,12 @@ def Partition(data, header_attrib, header_decision):
     #Value partition min at id min
     value_partition_min = value_partition[index_min_id]
     return value_partition_min
-#======================
-
-def Info(data, header_attrib, header_decision): #header_attrib = 'outlook', 'temp'...
+##================================##
+def Info(data, header_attrib, header_decision):
     info = 0
     #
     value_attrib = data[header_attrib].tolist()
-    #
+    #return len data
     lenght = len(value_attrib)
     #
     label_attrib = data[header_attrib].unique().tolist()
@@ -74,8 +75,8 @@ def Info(data, header_attrib, header_decision): #header_attrib = 'outlook', 'tem
     for i in label_attrib:
         count_label_diff = value_attrib.count(i)
         sub_data = data[data[header_attrib]==i]
-        entropy = Entropy(sub_data, header_decision)
-        info += (count_label_diff/lenght)*entropy
+        gini = Gini(sub_data, header_decision)
+        info += (count_label_diff/lenght)*gini
     return (info)
 
 def Non_homogeneous(data, header_decision):
@@ -103,31 +104,34 @@ def Non_homogeneous(data, header_decision):
         return None
     else:
         return label_decision[radio_id_max]
-#
+#=================================
 def Build_tree(data, header_attrib, header_decision):
-    entropy = Entropy(data, header_decision)
-    if(len(header_attrib) == 0 and entropy != 0):
+    gini = Gini(data, header_decision)
+    if(len(header_attrib) == 0 and gini != 0):
         # Var homog save value Non_homogeneous
         homog = Non_homogeneous(data, header_decision)
         if(homog == None):
             return None
         else:
             return TreeNode(attrib = homog)
-    elif(entropy==0):
+    #child only one
+    #if(len(data[header_decision].unique().tolist())==1):
+    elif(gini == 0):
         return TreeNode(attrib = data.iloc[0][header_decision])
     #
     gain = np.array([])
     for i in header_attrib:
         info = Info(data, i, header_decision)
-        gain = np.append(gain, (entropy-info))
-    #index max
-    label_max_id = np.argmax(gain)
-    #
-    node_attrib = header_attrib[label_max_id]
-    node_entropy = gain[label_max_id]
-    #
+        #Add node
+        gain = np.append(gain, info)
+    #Index min
+    label_min_id = np.argmin(gain)
+    #Creat attrib node
+    node_attrib = header_attrib[label_min_id]
+    node_gini = gain[label_min_id]
+    #Remove node to be used
     header_attrib.remove(node_attrib)
-    #
+    #Split attribute of node to be used
     split_attribute = data[node_attrib].unique().tolist()
     children = []
     for i in split_attribute:
@@ -138,19 +142,18 @@ def Build_tree(data, header_attrib, header_decision):
             return Build_tree(data, [], header_decision)
         children.append(sub_node)
     #
-    node = TreeNode(attrib = node_attrib, entropy = node_entropy, split_attribute = split_attribute, children = children)
-    #
+    node = TreeNode(attrib = node_attrib, gini = node_gini, split_attribute = split_attribute, children = children)
     return (node)
 
 def DrawTree(T, flag_draw=0):
-    print(T.attrib, T.entropy)
-    if(T.entropy==0):
+    print(T.attrib, T.gini)
+    if(T.split_attribute == None):
         None
     else:
         for i in range(len(T.split_attribute)):
             for j in range(flag_draw):
                 print('\t\t', end='')
-            print('   +--(', T.split_attribute[i] ,')--', end='')
+            print('   +--(', T.split_attribute[i],')--', end='')
             DrawTree(T.children[i], flag_draw+1)
 
 def Evaluation(data, tree):
@@ -192,8 +195,8 @@ def Train_and_eval(data, header_attrib, header_decision, ran_state, split_ratio 
 
 if __name__ == "__main__":
     label_decision = 'class'
-    label_attrib = ['Age', 'Gender', 'Polyuria', 'Polydipsia', 'sudden weight loss', 'weakness', 'Polyphagia', 'Genital thrush', 'visual blurring',
-    'Itching', 'Irritability', 'delayed healing', 'partial paresis', 'muscle stiffness', 'Alopecia', 'Obesity']
+    label_attrib = ['Age', 'Gender', 'Polyuria', 'Polydipsia', 'sudden weight loss', 'weakness', 'Polyphagia', 'Genital thrush',
+    'visual blurring', 'Itching', 'Irritability', 'delayed healing', 'partial paresis', 'muscle stiffness', 'Alopecia', 'Obesity']
     # label_attrib_continuity = 'Age'
     df = pd.read_csv("diabetes_data_upload_v1.csv", encoding = 'utf-8', sep=',')
     # print(Partition(df, label_attrib_continuity, label_decision))

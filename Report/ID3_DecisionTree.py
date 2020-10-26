@@ -11,8 +11,10 @@ class TreeNode(object):
 def Entropy(data, header_decision): #header_decision = 'play'
     entropy = 0
     value_decision = data[header_decision].tolist()
+    #
     lenght = len(value_decision)
     label_decision = data[header_decision].unique().tolist()
+    #
     for i in label_decision:
         count_label_diff = value_decision.count(i)
         entropy += -(count_label_diff/lenght)*np.log2(count_label_diff/lenght)
@@ -61,7 +63,6 @@ def Partition(data, header_attrib, header_decision):
     value_partition_min = value_partition[index_min_id]
     return value_partition_min
 #======================
-
 def Info(data, header_attrib, header_decision): #header_attrib = 'outlook', 'temp'...
     info = 0
     #
@@ -103,7 +104,7 @@ def Non_homogeneous(data, header_decision):
         return None
     else:
         return label_decision[radio_id_max]
-#
+#========================
 def Build_tree(data, header_attrib, header_decision):
     entropy = Entropy(data, header_decision)
     if(len(header_attrib) == 0 and entropy != 0):
@@ -113,12 +114,15 @@ def Build_tree(data, header_attrib, header_decision):
             return None
         else:
             return TreeNode(attrib = homog)
+    #
+    #
     elif(entropy==0):
         return TreeNode(attrib = data.iloc[0][header_decision])
     #
     gain = np.array([])
     for i in header_attrib:
         info = Info(data, i, header_decision)
+        #
         gain = np.append(gain, (entropy-info))
     #index max
     label_max_id = np.argmax(gain)
@@ -139,7 +143,6 @@ def Build_tree(data, header_attrib, header_decision):
         children.append(sub_node)
     #
     node = TreeNode(attrib = node_attrib, entropy = node_entropy, split_attribute = split_attribute, children = children)
-    #
     return (node)
 
 def DrawTree(T, flag_draw=0):
@@ -192,8 +195,8 @@ def Train_and_eval(data, header_attrib, header_decision, ran_state, split_ratio 
 
 if __name__ == "__main__":
     label_decision = 'class'
-    label_attrib = ['Age', 'Gender', 'Polyuria', 'Polydipsia', 'sudden weight loss', 'weakness', 'Polyphagia', 'Genital thrush', 'visual blurring',
-    'Itching', 'Irritability', 'delayed healing', 'partial paresis', 'muscle stiffness', 'Alopecia', 'Obesity']
+    label_attrib = ['Age', 'Gender', 'Polyuria', 'Polydipsia', 'sudden weight loss', 'weakness', 'Polyphagia', 'Genital thrush',
+    'visual blurring', 'Itching', 'Irritability', 'delayed healing', 'partial paresis', 'muscle stiffness', 'Alopecia', 'Obesity']
     # label_attrib_continuity = 'Age'
     df = pd.read_csv("diabetes_data_upload_v1.csv", encoding = 'utf-8', sep=',')
     # print(Partition(df, label_attrib_continuity, label_decision))
