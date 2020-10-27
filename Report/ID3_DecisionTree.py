@@ -174,8 +174,7 @@ def Train_and_eval(data, header_attrib, header_decision, ran_state, split_ratio 
     rows = data_test.shape[0]
     _class = data[label_decision].unique().tolist()
     #
-    evaluation = pd.DataFrame(data = np.array([[0, 0],
-                                            [0, 0]]) ,
+    evaluation = pd.DataFrame(data = np.zeros((len(_class), len(_class)), dtype=int),
                             index = _class,
                             columns = _class)
     #
