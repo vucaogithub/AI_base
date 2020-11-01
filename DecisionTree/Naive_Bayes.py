@@ -1,7 +1,12 @@
 import pandas as pd
 import numpy as np
 
-def model_NB(data, header_attrib, header_decision, muy = 1):
+def variance(): #often represented by σ^2, s^2 or Var(X)
+    return 0
+def expectation(): #μ
+    return 0
+
+def model_NB(data, header_attrib, header_attrib_continuity, header_decision, muy = 1):
     #muy is μ
     value_decision = data[header_decision].tolist()
     len_value_decision = len(value_decision)
@@ -78,9 +83,10 @@ if __name__ == "__main__":
 
     label_decision = 'play'
     label_attrib = ['outlook', 'temp', 'humidity', 'wind']
+    label_attrib_continuity = 'Age'
 
-    model_NB(df, label_attrib, label_decision)
-
+    print(model_NB(df, label_attrib, label_decision)['outlook'][0]["Yes"]["Sunny"])
+    #['outlook'][0].columns
     # numpyArray = np.array([[15, 22, 43],
     #                    [33, 24, 56]])
     #

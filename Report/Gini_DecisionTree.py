@@ -172,7 +172,7 @@ def Train_and_eval(data, header_attrib, header_decision, ran_state, split_ratio 
     data_test = data.loc[~data.index.isin(data_train.index)]
     #
     rows = data_test.shape[0]
-    _class = data[label_decision].unique().tolist()
+    _class = data[header_decision].unique().tolist()
     #
     evaluation = pd.DataFrame(data = np.zeros((len(_class), len(_class)), dtype=int),
                             index = _class,
