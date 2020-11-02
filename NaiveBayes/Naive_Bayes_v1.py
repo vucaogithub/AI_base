@@ -1,10 +1,22 @@
 import pandas as pd
 import numpy as np
 
-def variance(): #often represented by σ^2, s^2 or Var(X)
-    return 0
-def expectation(): #μ
-    return 0
+def mean_and_var(data): #μ and #often represented by σ^2, s^2 or Var(X)
+    _len = len(data)
+    sum = 0
+    for x in data:
+        sum = sum + x
+    mean = sum/_len
+    var = 0
+    for x in data:
+        var = var + (x - mean)*(x - mean)
+    var = (1/(_len - 1))*var
+    return (mean, var)
+
+def Gaussian(x, mean, var):
+    f = np.exp(-((x-mean)*(x-mean))/(2*var))
+    f = (1/np.sqrt(2*np.pi*var))*f
+    return f
 
 def model_NB(data, header_decision, header_attrib, header_attrib_continuity = None, muy = 1):
     #muy is μ
@@ -85,9 +97,13 @@ def Train_and_eval(data, header_decision, header_attrib, ran_state = 0, split_ra
     return (evaluation)
 
 if __name__ == "__main__":
-    '''df = pd.read_csv("play_tennis.csv", encoding = 'utf-8', sep=',', index_col = 0)
+    df = pd.read_csv("play_tennis.csv", encoding = 'utf-8', sep=',', index_col = 0)
 
-    label_decision = 'play'
+    mean, var = mean_and_var(df['temp'])
+    print(mean, var)
+    print(Gaussian(66, mean, var))
+
+    '''label_decision = 'play'
     label_attrib = ['outlook', 'temp', 'humidity', 'wind']
 
     rows = df.shape[0]
@@ -111,7 +127,7 @@ if __name__ == "__main__":
     print(df)
     print(evaluation)'''
 
-    label_decision = 'class'
+    '''label_decision = 'class'
     label_attrib = ['Age', 'Gender', 'Polyuria', 'Polydipsia', 'sudden weight loss', 'weakness', 'Polyphagia', 'Genital thrush',
     'visual blurring', 'Itching', 'Irritability', 'delayed healing', 'partial paresis', 'muscle stiffness', 'Alopecia', 'Obesity']
     # label_attrib_continuity = 'Age'
@@ -146,4 +162,4 @@ if __name__ == "__main__":
         count += 1
     #
     print('Average Accuracy:', average_accuracy/count)
-    print('Average_F:\t', average_F/count)
+    print('Average_F:\t', average_F/count)'''
