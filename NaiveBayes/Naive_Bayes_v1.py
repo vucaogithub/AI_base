@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-def mean_and_var(data): #μ and #often represented by σ^2, s^2 or Var(X)
+def Mean_and_var(data): #μ and #often represented by σ^2, s^2 or Var(X)
     _len = len(data)
     sum = 0
     for x in data:
@@ -18,8 +18,9 @@ def Gaussian(x, mean, var):
     f = (1/np.sqrt(2*np.pi*var))*f
     return f
 
-def model_NB(data, header_decision, header_attrib, header_attrib_continuity = None, muy = 1):
+def Model_NB(data, header_decision, header_attrib = [], header_attrib_continuity = [], muy = 1):
     #muy is μ
+    dict_model = {}
     value_decision = data[header_decision].tolist()
     len_value_decision = len(value_decision)
     label_decision = data[header_decision].unique().tolist()
@@ -49,14 +50,28 @@ def model_NB(data, header_decision, header_attrib, header_attrib_continuity = No
                 df_attrib[x][y] = ((len(sub_data)+laplace)/(df_decision[x][0]+muy))
         dict_attrib[index] = df_attrib
     #
+    dict_attrib_continuity = {}
+    for index in header_attrib_continuity:
+        df_attrib_continuity = pd.DataFrame(data = [],
+                                            index = ['mean', 'var'],
+                                            columns = label_decision)
+        for x in label_decision:
+            sub_data = data[data[header_decision]==x]
+            sub_data = sub_data[index]
+            _mean, _var = Mean_and_var(sub_data)
+            df_attrib_continuity[x]['mean'] = _mean
+            df_attrib_continuity[x]['var'] = _var
+        dict_attrib_continuity[index] = df_attrib_continuity
+    #
     df_decision = df_decision/len_value_decision
     #
     dict_decision = {}
     dict_decision[header_decision] = df_decision
     #
-    dict_model = {}
+
     dict_model['decision'] = dict_decision
     dict_model['attrib'] = dict_attrib
+    dict_model['attrib_continuity'] = dict_attrib_continuity
     #
     return dict_model
 
@@ -67,12 +82,17 @@ def Evaluation(record, model):
     for header, data in model['attrib'].items():
         for col in df_predict.columns:
             df_predict[col][0] = df_predict[col][0] * data.loc[record[header],:][col]
-    # print(df_predict['Yes'][0])
-    # print(df_predict['No'][0])
-
+    #
+    for header, data in model['attrib_continuity'].items():
+        for col in df_predict.columns:
+            x = record[header]
+            mean = data.loc['mean'][col]
+            var = data.loc['var'][col]
+            df_predict[col][0] = df_predict[col][0] * Gaussian(x, mean, var)
+    #
     return (df_predict.idxmax(axis = 1, skipna = True)[0])
 
-def Train_and_eval(data, header_decision, header_attrib, ran_state = 0, split_ratio = 2/3):
+def Train_and_eval(data, header_decision, header_attrib = [], header_attrib_continuity = [], ran_state = 0, split_ratio = 2/3):
     data_train = data.sample(frac = split_ratio, random_state=ran_state)
     data_test = data.loc[~data.index.isin(data_train.index)]
     #
@@ -83,7 +103,7 @@ def Train_and_eval(data, header_decision, header_attrib, ran_state = 0, split_ra
                             index = _class,
                             columns = _class)
     #
-    model = model_NB(data_train, header_decision, header_attrib)
+    model = Model_NB(data_train, header_decision, header_attrib, header_attrib_continuity)
     #
     for i in range(rows):
         item = data_test.iloc[i,:]
@@ -97,14 +117,13 @@ def Train_and_eval(data, header_decision, header_attrib, ran_state = 0, split_ra
     return (evaluation)
 
 if __name__ == "__main__":
-    df = pd.read_csv("play_tennis.csv", encoding = 'utf-8', sep=',', index_col = 0)
+    '''df = pd.read_csv("play_tennis.csv", encoding = 'utf-8', sep=',', index_col = 0)
 
-    mean, var = mean_and_var(df['temp'])
-    print(mean, var)
-    print(Gaussian(66, mean, var))
-
-    '''label_decision = 'play'
-    label_attrib = ['outlook', 'temp', 'humidity', 'wind']
+    label_decision = 'play'
+    label_attrib = ['outlook', 'wind']
+    label_attrib_continuity = ['temp', 'humidity']
+    class_positives = 'Yes'
+    class_negatives = 'No'
 
     rows = df.shape[0]
     _class = df[label_decision].unique().tolist()
@@ -113,7 +132,7 @@ if __name__ == "__main__":
                             index = _class,
                             columns = _class)
     #
-    model = model_NB(df, label_decision, label_attrib)
+    model = Model_NB(df, label_decision, label_attrib, label_attrib_continuity)
     #
     for i in range(rows):
         item = df.iloc[i,:]
@@ -124,14 +143,14 @@ if __name__ == "__main__":
             evaluation[Y_test][Y_data] += 1
         except KeyError:
             None
-    print(df)
+    # print(df)
     print(evaluation)'''
 
-    '''label_decision = 'class'
-    label_attrib = ['Age', 'Gender', 'Polyuria', 'Polydipsia', 'sudden weight loss', 'weakness', 'Polyphagia', 'Genital thrush',
+    label_decision = 'class'
+    label_attrib = ['Gender', 'Polyuria', 'Polydipsia', 'sudden weight loss', 'weakness', 'Polyphagia', 'Genital thrush',
     'visual blurring', 'Itching', 'Irritability', 'delayed healing', 'partial paresis', 'muscle stiffness', 'Alopecia', 'Obesity']
-    # label_attrib_continuity = 'Age'
-    df = pd.read_csv("diabetes_data_upload_v1.csv", encoding = 'utf-8', sep=',')
+    label_attrib_continuity = ['Age']
+    df = pd.read_csv("../Report/diabetes_data_upload.csv", encoding = 'utf-8', sep=',')
     # print(Partition(df, label_attrib_continuity, label_decision))
 
     class_positives = 'Positive'
@@ -141,7 +160,7 @@ if __name__ == "__main__":
     average_accuracy = 0
     for i in range(1,11):
         print("Eval", i, ":")
-        matrix = Train_and_eval(df, label_decision, label_attrib, i)
+        matrix = Train_and_eval(df, label_decision, label_attrib, label_attrib_continuity, ran_state = i)
         print(matrix)
         precision = (matrix[class_positives][class_positives])/ \
                         (matrix[class_positives][class_positives]+matrix[class_positives][class_negatives])
@@ -162,4 +181,4 @@ if __name__ == "__main__":
         count += 1
     #
     print('Average Accuracy:', average_accuracy/count)
-    print('Average_F:\t', average_F/count)'''
+    print('Average_F:\t', average_F/count)
