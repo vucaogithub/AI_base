@@ -1,0 +1,13 @@
+Age,Gender,Polyuria,Polydipsia,sudden weight loss,weakness,Polyphagia,Genital thrush,visual blurring,Itching,Irritability,delayed healing,partial paresis,muscle stiffness,Alopecia,Obesity,class
+<=34,Female,No,No,No,No,No,No,No,No,No,No,No,No,No,No,Negative
+<=34,Female,Yes,Yes,No,Yes,No,No,No,No,Yes,No,No,Yes,No,No,Positive
+<=34,Male,No,No,No,No,No,No,No,No,No,No,No,No,No,No,Negative
+<=34,Female,No,No,No,No,No,No,No,No,No,No,No,No,No,No,Negative
+<=34,Male,No,No,No,No,No,No,No,No,No,No,No,No,No,No,Negative
+>34,Male,Yes,No,No,No,Yes,Yes,No,No,Yes,Yes,No,No,Yes,No,Positive
+>34,Male,Yes,No,Yes,No,No,No,No,No,No,No,Yes,No,Yes,No,Positive
+>34,Female,Yes,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No,Yes,No,Yes,Positive
+>34,Female,No,No,No,No,No,No,No,No,No,No,No,No,No,Yes,Positive
+>34,Male,Yes,No,No,No,No,Yes,No,Yes,No,No,No,Yes,No,Yes,Positive
+>34,Male,No,No,No,No,No,No,No,No,No,No,No,No,No,No,Negative
+>34,Male,Yes,No,No,No,No,Yes,No,Yes,No,No,No,Yes,No,Yes,Positive
