@@ -138,8 +138,8 @@ if __name__ == "__main__":
                     (matrix[class_positives][class_positives]+matrix[class_negatives][class_positives])
         #
         accuracy = (matrix[class_positives][class_positives]+matrix[class_negatives][class_negatives])/ \
-                    (matrix[class_positives][class_positives]+matrix[class_negatives][class_negatives]+
-                    matrix[class_positives][class_negatives]+matrix[class_positives][class_negatives])
+                    (matrix[class_positives][class_positives]+matrix[class_negatives][class_negatives]+ \
+                    matrix[class_positives][class_negatives]+matrix[class_negatives][class_positives])
         print('Accuracy:', accuracy)
         F = (2*precision*recall)/(precision+recall)
         print('F:\t', F)
