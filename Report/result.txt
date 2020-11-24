@@ -131,63 +131,63 @@ Average_F:       0.9737524698999257
 Naive Bayes
 Eval 1 :
           Positive  Negative
-Positive        85        20
-Negative         2        66
-Accuracy: 0.8728323699421965
-F:       0.8854166666666666
+Positive        95        14
+Negative         6        58
+Accuracy: 0.884393063583815
+F:       0.9047619047619048
 Eval 2 :
           Positive  Negative
-Positive        95        15
-Negative         4        59
+Positive        83        11
+Negative         8        71
 Accuracy: 0.8901734104046243
-F:       0.9090909090909092
+F:       0.8972972972972972
 Eval 3 :
           Positive  Negative
-Positive        87        19
-Negative         9        58
-Accuracy: 0.838150289017341
-F:       0.8613861386138613
+Positive        88        16
+Negative         8        61
+Accuracy: 0.861271676300578
+F:       0.8799999999999999
 Eval 4 :
           Positive  Negative
-Positive        99        14
-Negative         3        57
-Accuracy: 0.9017341040462428
-F:       0.9209302325581395
+Positive        85        14
+Negative         2        72
+Accuracy: 0.9075144508670521
+F:       0.9139784946236559
 Eval 5 :
           Positive  Negative
-Positive        83        19
-Negative         8        63
-Accuracy: 0.8439306358381503
-F:       0.8601036269430051
+Positive        92        14
+Negative         9        58
+Accuracy: 0.8670520231213873
+F:       0.8888888888888888
 Eval 6 :
           Positive  Negative
-Positive        94        16
-Negative         5        58
-Accuracy: 0.8786127167630058
-F:       0.8995215311004785
+Positive        91        22
+Negative         4        56
+Accuracy: 0.8497109826589595
+F:       0.875
 Eval 7 :
           Positive  Negative
-Positive        87        13
-Negative         6        67
-Accuracy: 0.8901734104046243
-F:       0.9015544041450777
+Positive        79        19
+Negative         4        71
+Accuracy: 0.8670520231213873
+F:       0.8729281767955801
 Eval 8 :
           Positive  Negative
-Positive       101        16
-Negative         6        50
-Accuracy: 0.8728323699421965
-F:       0.9017857142857143
+Positive        91        13
+Negative         6        63
+Accuracy: 0.8901734104046243
+F:       0.9054726368159204
 Eval 9 :
           Positive  Negative
-Positive        83        12
-Negative         8        70
-Accuracy: 0.884393063583815
-F:       0.8924731182795699
+Positive        89        15
+Negative        12        57
+Accuracy: 0.8439306358381503
+F:       0.8682926829268293
 Eval 10 :
           Positive  Negative
-Positive        93        14
-Negative         6        60
-Accuracy: 0.884393063583815
-F:       0.9029126213592232
-Average Accuracy: 0.8757225433526011
-Average_F:       0.8935174963042645
+Positive        90        18
+Negative         6        59
+Accuracy: 0.861271676300578
+F:       0.8823529411764706
+Average Accuracy: 0.8722543352601158
+Average_F:       0.8888973023286548

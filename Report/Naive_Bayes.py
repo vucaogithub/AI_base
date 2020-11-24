@@ -117,10 +117,10 @@ def Train_and_eval(data, header_decision, header_attrib = [], header_attrib_cont
 
 if __name__ == "__main__":
     label_decision = 'class'
-    label_attrib = ['Gender', 'Polyuria', 'Polydipsia', 'sudden weight loss', 'weakness', 'Polyphagia', 'Genital thrush',
+    label_attrib = ['Age', 'Gender', 'Polyuria', 'Polydipsia', 'sudden weight loss', 'weakness', 'Polyphagia', 'Genital thrush',
     'visual blurring', 'Itching', 'Irritability', 'delayed healing', 'partial paresis', 'muscle stiffness', 'Alopecia', 'Obesity']
-    label_attrib_continuity = ['Age']
-    df = pd.read_csv("diabetes_data_upload.csv", encoding = 'utf-8', sep=',')
+    label_attrib_continuity = []
+    df = pd.read_csv("diabetes_data_upload_v1.csv", encoding = 'utf-8', sep=',')
 
     class_positives = 'Positive'
     class_negatives = 'Negative'
