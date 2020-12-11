@@ -55,10 +55,10 @@ def Non_homogeneous(data, header_decision):
     radio_id_max = np.argmax(radio)
     radio_max = radio[radio_id_max]
     #Value max in radio array
-    if(radio.count(radio_max) >= 2 and radio_max >= radio_stand):
-        return None
-    else:
+    if(radio.count(radio_max) == 1 and radio_max >= radio_stand):
         return label_decision[radio_id_max]
+    else:
+        return None
 #
 def Build_tree(data, header_attrib, header_decision):
     entropy = Entropy(data, header_decision)

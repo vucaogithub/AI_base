@@ -80,30 +80,30 @@ def Info(data, header_attrib, header_decision):
     return (info)
 
 def Non_homogeneous(data, header_decision):
-    radio_stand = 1.0
+    ratio_stand = 1.0
     value_decision = data[header_decision].tolist()
     #List value decision
     label_decision = data[header_decision].unique().tolist()
     #Array ratio and count_label_diff
     count_label_diff = []
-    radio = []
+    ratio = []
     for i in label_decision:
         count_label_diff.append(value_decision.count(i))
     #Take id value min in count_label_diff Array
     label_id_min = np.argmin(count_label_diff)
     #Take value min in count_label_diff array
     value_min = count_label_diff[label_id_min]
-    #Take value in count_label_diff array div value min in count_label_diff array -> add radio array
+    #Take value in count_label_diff array div value min in count_label_diff array -> add ratio array
     for i in count_label_diff:
-        radio.append(i/value_min)
-    #Take index of value max in radio array
-    radio_id_max = np.argmax(radio)
-    radio_max = radio[radio_id_max]
-    #Value max in radio array
-    if(radio.count(radio_max) >= 2 and radio_max >= radio_stand):
-        return None
+        ratio.append(i/value_min)
+    #Take index of value max in ratio array
+    ratio_id_max = np.argmax(ratio)
+    ratio_max = ratio[ratio_id_max]
+    #Value max in ratio array
+    if(ratio.count(ratio_max) == 1 and ratio_max >= ratio_stand):
+        return label_decision[ratio_id_max]
     else:
-        return label_decision[radio_id_max]
+        return None
 #=================================
 def Build_tree(data, header_attrib, header_decision):
     gini = Gini(data, header_decision)
